@@ -54,14 +54,14 @@ async def get_random_all_elements(request: GetRandomNBElementsRequest):
     num = request.num
     nums_of_each_types = generate_random_numbers(num, 5)
     elements = []
-    for i, type_index in enumerate(ALL_TYPES):
+    for i, type in enumerate(ALL_TYPES):
         elements += [
-            NormalBalanceElements(name=el, type=type_index)
+            NormalBalanceElements(name=el, type=type)
             for el in random.sample(
-                account_elements.get_all_elements(type_index),
+                account_elements.get_all_elements(i),
                 min(
                     nums_of_each_types[i],
-                    len(account_elements.get_all_elements(type_index)),
+                    len(account_elements.get_all_elements(i)),
                 ),
             )
         ]
