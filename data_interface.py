@@ -21,10 +21,14 @@ class ExcelDataInterface:
         sheet = self.get_data("Normal Balance")
         return sheet.iloc[:, 0].dropna().tolist()
 
+    def get_all_elements(self, type_index: int):
+        sheet = self.get_data("All")
+        return sheet.iloc[:, type_index].dropna().tolist()
+
 
 account_elements = ExcelDataInterface(
     Path(__file__).parent / "data" / "Accounting Elements for Game.xlsx",
-    ["Normal Balance"],
+    ["Normal Balance", "All"],
 )
 
 
