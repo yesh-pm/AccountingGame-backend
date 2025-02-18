@@ -1,7 +1,10 @@
+import random
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from setting import WebSetting
 from data_interface import account_elements
+from model import NormalBalanceElements, GetRandomNBElementsRequest
 
 app = FastAPI()
 
@@ -23,9 +26,23 @@ app.add_middleware(
 app.mount(WebSetting.api_base.value, app)
 
 
-@app.get("/get_all_nb_element")
-async def get_all_nb_element():
-    return {
-        "credit": account_elements.get_credits_elements,
-        "debit": account_elements.get_debits_elements,
-    }
+@app.post("/get_random_nb_elements")
+async def get_random_nb_elements(request: GetRandomNBElementsRequest):
+    num = request.num
+    credit_num = random.randint(0, num)
+    debit_num = num - credit_num
+    credit_elements = random.sample(
+        account_elements.get_credits_elements,
+        min(credit_num, len(account_elements.get_credits_elements)),
+    )
+    debit_elements = random.sample(
+        account_elements.get_debits_elements,
+        min(debit_num, len(account_elements.get_debits_elements)),
+    )
+
+    elements = [
+        NormalBalanceElements(name=el, type="credit") for el in credit_elements
+    ] + [NormalBalanceElements(name=el, type="debit") for el in debit_elements]
+
+    random.shuffle(elements)
+    return elements
